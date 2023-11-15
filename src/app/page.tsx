@@ -1,11 +1,11 @@
 import { Button, ConfigProvider } from "antd";
 import Link from "next/link";
 
-import theme from "./theme/themeConfig";
+import themeConfig from "@/theme/themeConfig";
 
 export default function HomePage() {
   return (
-    <ConfigProvider theme={theme}>
+    <ConfigProvider theme={themeConfig}>
       <div className="App">
         <h1>Home</h1>
         <Link href="/admin">

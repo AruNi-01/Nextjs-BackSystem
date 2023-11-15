@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from "next";
-import StyledComponentsRegistry from "../lib/AntdRegistry";
+import StyledComponentsRegistry from "@/lib/AntdRegistry";
 import "./globals.css";
 
 export const metadata: Metadata = {
