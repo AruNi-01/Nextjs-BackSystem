@@ -95,10 +95,7 @@ export default function Users() {
           <Button
             onClick={() => {
               setModalVisible(true);
-              console.log(`setFieldsValue before: record=`, record)
               formOfUserAdd.setFieldsValue(record);
-              console.log(`setFieldsValue after: getFieldsValue()=`, formOfUserAdd.getFieldsValue())
-              console.log(`setFieldsValue after: getFieldsValue(true)=`, formOfUserAdd.getFieldsValue(true))
             }}
             type="text"
             icon={<EditFilled />}
@@ -144,14 +141,20 @@ export default function Users() {
         title={<span className="font-bold text-lg">Users Info</span>}
         hoverable={true}
         extra={
+          // 新增 user
           <Button
-            onClick={() => setModalVisible(true)}
+            onClick={() => {
+              setModalVisible(true);
+              // 由于设置 Modal 关闭时自动清空数据会有 bug，因此新增时直接手动清理，编辑时不用处理，会自动填充当前行数据
+              handleModalReset();
+            }}
             type="primary"
             shape="round"
             icon={<UserAddOutlined />}
           />
         }
       >
+        {/* 搜索 */}
         <Form layout="inline">
           <Form.Item label="Name">
             <Input placeholder="input name" />
@@ -161,6 +164,7 @@ export default function Users() {
           </Form.Item>
         </Form>
 
+        {/* 表格 展示数据 */}
         <Table className="mt-2" columns={columns} dataSource={mockUserList} />
       </Card>
 
@@ -171,7 +175,8 @@ export default function Users() {
         onOk={handleModalOk}
         onCancel={handleModalCancle}
         maskClosable={false} // 点击空白区域不关闭 Modal
-        destroyOnClose={true} // 在 Modal 关闭时自动清空数据
+        // destroyOnClose={true} // 在 Modal 关闭时自动清空数据
+        // forceRender={true}
         footer={[
           <Button key="cancel" onClick={handleModalCancle}>
             Cancel
@@ -188,13 +193,13 @@ export default function Users() {
           layout="horizontal"
           labelCol={{ span: 4 }}
           form={formOfUserAdd} // formOfUserAdd 控制表单内容 Hook
-          preserve={false} // 配合 Modal 使用，关闭时销毁表单字段数据
+          // preserve={false} // 配合 Modal 使用，关闭时销毁表单字段数据
           onFinish={(formData) => {
             console.log(formData);
             // TODO: 调用新增or修改 user API，这里交给后端去判断即可，传入的主键为空则为新增
 
             setModalVisible(false);
-            if (formData.id === null)
+            if (!formData.id)
               message.success(`Add user (Name: ${formData.name}) usccess !`);
             else message.info(`update user (Name: ${formData.name}) success !`);
           }}
