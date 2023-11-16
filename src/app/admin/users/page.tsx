@@ -235,25 +235,34 @@ export default function Users() {
           onFinish={async (formData) => {
             setAddOkLoading(true);
 
-            try {
-              await fetch(ApiPathOfUser.CreateOrUpdate, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-              });
+            const handleFile = () => {
               if (!formData.id)
-                message.success(`Add user (Name: ${formData.name}) usccess !`);
+                message.error(`Add user (Name: ${formData.name}) failed!`);
               else
-                message.info(`update user (Name: ${formData.name}) success !`);
-              setRefreshUserList({});
-            } catch (error) {
-              if (!formData.id)
-                message.error(`Add user (Name: ${formData.name}) failed !`);
-              else
-                message.error(`update user (Name: ${formData.name}) failed !`);
-            }
+                message.error(`Update user (Name: ${formData.name}) failed!`);
+            };
+
+            await fetch(ApiPathOfUser.CreateOrUpdate, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formData),
+            })
+              .then((response) => {
+                if (response.ok) {
+                  if (!formData.id)
+                    message.success(
+                      `Add user (Name: ${formData.name}) success!`
+                    );
+                  else
+                    message.info(
+                      `Update user (Name: ${formData.name}) success!`
+                    );
+                  setRefreshUserList({});
+                } else handleFile();
+              })
+              .catch((error) => handleFile());
             setAddOkLoading(false);
             formOfUserAdd.resetFields();
             setModalVisible(false);
