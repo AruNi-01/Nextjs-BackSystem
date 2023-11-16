@@ -1,4 +1,4 @@
-这是一个用于练习前端基础的后台系统，演示地址：https://nextjs-back-system.vercel.app。后端 API 仓库：[Nextjs-BackSystem-API](https://github.com/AruNi-01/Nextjs-BackSystem-API)
+这是一个用于练习前端基础的后台系统，演示地址：https://nextjs-back-system.vercel.app 。后端 API 仓库：[Nextjs-BackSystem-API](https://github.com/AruNi-01/Nextjs-BackSystem-API)
 
 
 前端技术栈：
