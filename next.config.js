@@ -1,4 +1,16 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+// 接口转发，解决 CORS 问题
+const rewrites = () => {
+  return [
+    {
+      source: "/api/:path*",
+      destination: "http://localhost:8000/api/:path*",
+    },
+  ];
+};
 
-module.exports = nextConfig
+const nextConfig = {
+  rewrites,
+};
+
+module.exports = nextConfig;

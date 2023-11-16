@@ -1,5 +1,5 @@
 "use client";
-import { Button, FloatButton, Image, Layout, Menu, MenuProps } from "antd";
+import { Button, FloatButton, Image, Layout, Menu } from "antd";
 import React, { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -63,8 +63,15 @@ export default function AdminLayout({
           {children}
         </Content>
 
+        <Footer className="py-4 text-center">
+          Next.js BackSystem© 2023 Made by {' '}
+          <a href="https://aruni.me" target="_blank">
+            AarynLu
+          </a>
+        </Footer>
+
         <FloatButton.Group
-          className="right-10 mb-10"
+          className="right-7 mb-4"
           trigger="hover"
           type="primary"
           icon={<CommentOutlined />}
@@ -87,13 +94,6 @@ export default function AdminLayout({
             icon={<WechatOutlined />}
           />
         </FloatButton.Group>
-
-        <Footer className="py-4 text-center">
-          Next.js BackSystem© 2023 Made by
-          <Button href="https://aruni.me" target="_blank" type="link" size="small">
-            AarynLu
-          </Button>
-        </Footer>
       </Layout>
     </Layout>
   );
