@@ -59,7 +59,7 @@ export default function AdminLayout({
         </Header>
 
         {/* <span className="h-1 bg-gradient-to-r from-blue-500 to-violet-400"></span> */}
-        <Content className="border-t-2 pl-9 pr-9 bg-white">
+        <Content className="border-t-2 pl-9 pr-9 bg-white overflow-auto">
           {children}
         </Content>
 
