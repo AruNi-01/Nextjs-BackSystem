@@ -1,13 +1,16 @@
-"use client";
-import { Button, FloatButton, Image, Layout, Menu } from "antd";
-import React, { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+'use client';
+import { Button, FloatButton, Image, Layout, Menu } from 'antd';
+import React, { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   CommentOutlined,
   TwitterOutlined,
   WechatOutlined,
-} from "@ant-design/icons";
-import siderMenuItems from "./SiderMenuItem";
+  HeartTwoTone,
+  SmileTwoTone,
+} from '@ant-design/icons';
+import siderMenuItems from './SiderMenuItem';
+import Link from 'next/link';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -31,15 +34,17 @@ export default function AdminLayout({
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical h-8 mb-3">
-          <div className="mx-auto my-auto rounded-b-xl text-center font-bold text-lg w-2/3 bg-gradient-to-r from-blue-500 to-violet-400">
-            Menu
-          </div>
+          <Link href="/admin" className='text-black hover:text-purple-800'>
+            <div className="mx-auto my-auto rounded-b-xl text-center font-bold text-lg w-2/3 bg-gradient-to-r from-blue-500 to-violet-400">
+              Menu
+            </div>
+          </Link>
         </div>
 
-        <Menu 
-          theme="dark" 
-          mode="inline" 
-          items={siderMenuItems} 
+        <Menu
+          theme="dark"
+          mode="inline"
+          items={siderMenuItems}
           onClick={({ key }) => {
             navigate.push(key);
           }}
@@ -53,8 +58,13 @@ export default function AdminLayout({
           <span className="p-8 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-violet-600">
             Next.js BackSystem
           </span>
-          <Button href="/admin/login" className="float-right mr-5 mt-4" type="primary" shape="round">
-            Login →
+          <Button
+            href="/admin/login"
+            className="float-right mr-5 mt-4"
+            type="primary"
+            shape="round"
+          >
+            <SmileTwoTone /> Login →
           </Button>
         </Header>
 
@@ -64,10 +74,11 @@ export default function AdminLayout({
         </Content>
 
         <Footer className="py-4 text-center">
-          Next.js BackSystem© 2023 Made by {' '}
+          Next.js BackSystem© 2023 Made by{' '}
           <a href="https://aruni.me" target="_blank">
             AarynLu
-          </a>
+          </a>{' '}
+          <HeartTwoTone />
         </Footer>
 
         <FloatButton.Group

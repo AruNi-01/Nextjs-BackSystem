@@ -11,18 +11,23 @@ import {
   Select,
   message,
   Popconfirm,
+  Tag,
 } from 'antd';
 import {
   UserAddOutlined,
   EditFilled,
   DeleteOutlined,
   CloseCircleOutlined,
+  ManOutlined,
+  WomanOutlined,
+  ClearOutlined,
 } from '@ant-design/icons';
 import { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { useForm } from 'antd/es/form/Form';
 import { ApiPathOfUser } from '@/config/apiConfig';
 import Search from 'antd/es/input/Search';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
+import mockUserList from '../../../../public/mockData';
 
 interface UserDataType {
   id: number;
@@ -43,96 +48,6 @@ interface TableParams {
 }
 
 export default function Users() {
-  // 表格 —— 表头
-  const columns: ColumnsType<UserDataType> = [
-    {
-      title: 'No.',
-      // 生成复杂数据的渲染函数，参数分别为当前行的值，当前行数据，行索引
-      render: (_, record, index) => {
-        const current = tableParams.pagination?.current ?? 1;
-        const pageSize = tableParams.pagination?.pageSize ?? 10;
-        return (current - 1) * pageSize + (index + 1);
-      },
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name', // 列数据在数据项中对应的路径
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      sorter: true,
-      width: '10%',
-    },
-    {
-      title: 'Gender',
-      dataIndex: 'gender',
-      filters: [
-        { text: 'Male', value: 'male' },
-        { text: 'Female', value: 'female' },
-      ],
-      width: '12%',
-    },
-    {
-      title: 'Phone',
-      key: 'phone',
-      dataIndex: 'phone',
-    },
-    {
-      title: 'Team',
-      dataIndex: 'team',
-      filters: [
-        { text: 'Development', value: 'development' },
-        { text: 'Design', value: 'design' },
-        { text: 'Sell', value: 'sell' },
-        { text: 'Finance', value: 'finance' },
-        { text: 'Legal', value: 'legal' },
-      ],
-    },
-    {
-      title: 'Action',
-      // 编辑、删除按钮
-      render: (_, record) => (
-        <Space size="small">
-          <Button
-            onClick={() => {
-              setModalVisible(true);
-              formOfUserAdd.setFieldsValue(record);
-            }}
-            type="text"
-            icon={<EditFilled />}
-          />
-
-          <Popconfirm
-            placement="rightTop"
-            title="Confirm delete ?"
-            okText="Yes"
-            cancelText="No"
-            icon={<CloseCircleOutlined style={{ color: 'red' }} />}
-            okButtonProps={{ loading: deleteOkLoading }}
-            onConfirm={async () => {
-              setDeleteOkLoading(true);
-              try {
-                await fetch(`${ApiPathOfUser.DeleteUserById}/${record.id}`, {
-                  method: 'DELETE',
-                });
-                setReloadUserList({});
-                message.success(
-                  `delete user ${record.name} (id=${record.id}) succsess !`
-                );
-              } catch (error) {
-                message.warning(`delete user ${record.name} failed !`);
-              }
-              setDeleteOkLoading(false);
-            }}
-          >
-            <Button danger type="text" icon={<DeleteOutlined />} />
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
-
   const [userList, setUserList] = useState<UserDataType[]>([]);
   const [reloadUserList, setReloadUserList] = useState({});
 
@@ -148,6 +63,11 @@ export default function Users() {
     filters: Record<string, FilterValue | null>,
     sorter: SorterResult<UserDataType> | SorterResult<UserDataType>[]
   ) => {
+    // 改变界面的 filt，sort
+    setFilteredInfo(filters);
+    setSortedInfo(sorter as SorterResult<UserDataType>);
+
+    // 改变 tableParams，重新调用后端接口
     setTableParams({
       ...tableParams,
       pagination,
@@ -191,6 +111,7 @@ export default function Users() {
     }
     tableParams.searchUsername && setSearchLoading(false);
     setTableChangeLoading(false);
+    setClearLoading(false);
   };
 
   const [addOkLoading, setAddOkLoading] = useState<boolean>(false);
@@ -199,55 +120,198 @@ export default function Users() {
   const [tableChangeLoading, setTableChangeLoading] = useState<boolean>(false);
 
   // 用于控制 Modal 中的 Form 表单
-  const [formOfUserAdd] = useForm();
+  const [formOfModal] = useForm();
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const handleModalOk = () => formOfUserAdd.submit();
-  const handleModalCancle = () => {
-    setModalVisible(false);
-    // 由于设置 Modal 关闭时自动清空数据会有 bug，因此直接手动清理(在编辑/新增完成后)
-    formOfUserAdd.resetFields();
-  };
-  const handleModalReset = () => formOfUserAdd.resetFields();
+  // 由于设置 Modal 关闭时自动清空（destroyOnClose={true}）会有 bug，故 Modal 关闭时手动清理
+  useEffect(() => {
+    !modalVisible && handleModalFormReset();
+  }, [modalVisible]);
+  const handleModalOk = () => formOfModal.submit();
+  const handleModalCancle = () => setModalVisible(false);
+  const handleModalFormReset = () => formOfModal.resetFields();
   // 新增/编辑 Modal 表单提交的处理函数
   async function handleModalFormSubmit(formData: any) {
-    setAddOkLoading(true);
-
     const handleFail = () => {
       !formData.id
         ? message.error(`Add user (Name: ${formData.name}) failed!`)
         : message.error(`Update user (Name: ${formData.name}) failed!`);
     };
 
-    await fetch(ApiPathOfUser.CreateOrUpdate, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => {
-        if (response.ok) {
-          !formData.id
-            ? message.success(`Add user (Name: ${formData.name}) success!`)
-            : message.info(`Update user (Name: ${formData.name}) success!`);
-          setReloadUserList({});
-        } else {
-          handleFail();
-        }
-      })
-      .catch((error) => handleFail());
+    setAddOkLoading(true);
+    try {
+      const rsp = await fetch(ApiPathOfUser.CreateOrUpdate, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const flag = await rsp.json();
+      if (flag) {
+        !formData.id
+          ? message.success(`Add user (Name: ${formData.name}) success!`)
+          : message.success(`Update user (Name: ${formData.name}) success!`);
+        setReloadUserList({});
+      } else {
+        handleFail();
+      }
+    } catch (error) {
+      handleFail();
+    }
 
     setAddOkLoading(false);
-    formOfUserAdd.resetFields();
     setModalVisible(false);
   }
+
+  const [filteredInfo, setFilteredInfo] = useState<
+    Record<string, FilterValue | null>
+  >({});
+  const [sortedInfo, setSortedInfo] = useState<SorterResult<UserDataType>>({});
+
+  const [clearLoading, setClearLoading] = useState<boolean>(false);
+
+  // 表格 —— 表头
+  const columns: ColumnsType<UserDataType> = [
+    {
+      title: 'No.',
+      // 生成复杂数据的渲染函数，参数分别为当前行的值，当前行数据，行索引
+      render: (_, record, index) => {
+        const current = tableParams.pagination?.current ?? 1;
+        const pageSize = tableParams.pagination?.pageSize ?? 10;
+        return (current - 1) * pageSize + (index + 1);
+      },
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name', // 列数据在数据项中对应的路径
+    },
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      sorter: true,
+      // 受控属性，用于控制页面的排序
+      sortOrder: sortedInfo.field === 'age' ? sortedInfo.order : null,
+      width: '10%',
+    },
+    {
+      title: 'Gender',
+      dataIndex: 'gender',
+      filters: [
+        { text: 'Male', value: 'male' },
+        { text: 'Female', value: 'female' },
+      ],
+      filteredValue: filteredInfo.gender || null, // 受控属性，用于控制页面的筛选
+      render: (gender: string) => {
+        const isMan = gender === 'male';
+        return (
+          <span>
+            <Tag color={isMan ? 'blue' : 'pink'}>
+              {isMan ? <ManOutlined /> : <WomanOutlined />}
+              {isMan ? ' Male' : ' Female'}
+            </Tag>
+          </span>
+        );
+      },
+      width: '12%',
+    },
+    {
+      title: 'Phone',
+      key: 'phone',
+      dataIndex: 'phone',
+    },
+    {
+      title: 'Team',
+      dataIndex: 'team',
+      filters: [
+        { text: 'Development', value: 'Development' },
+        { text: 'Design', value: 'Design' },
+        { text: 'Sell', value: 'Sell' },
+        { text: 'Finance', value: 'Finance' },
+        { text: 'Legal', value: 'Legal' },
+      ],
+      filteredValue: filteredInfo.team || null,
+      render: (team: string) => (
+        <span>
+          <Tag
+            bordered={false}
+            color={
+              team === 'Development'
+                ? 'geekblue'
+                : team === 'Design'
+                ? 'green'
+                : team === 'Sell'
+                ? 'volcano'
+                : team === 'Finance'
+                ? 'gold'
+                : team === 'Legal'
+                ? 'purple'
+                : 'default'
+            }
+            key={team}
+          >
+            {team}
+          </Tag>
+        </span>
+      ),
+    },
+    {
+      title: 'Action',
+      // 编辑、删除按钮
+      render: (_, record) => (
+        <Space size="small">
+          <Button
+            onClick={() => {
+              setModalVisible(true);
+              formOfModal.setFieldsValue(record);
+            }}
+            type="text"
+            icon={<EditFilled />}
+          />
+
+          <Popconfirm
+            placement="rightTop"
+            title="Confirm delete ?"
+            okText="Yes"
+            cancelText="No"
+            icon={<CloseCircleOutlined style={{ color: 'red' }} />}
+            okButtonProps={{ loading: deleteOkLoading }}
+            onConfirm={async () => {
+              setDeleteOkLoading(true);
+              try {
+                const rsp = await fetch(
+                  `${ApiPathOfUser.DeleteUserById}/${record.id}`,
+                  {
+                    method: 'DELETE',
+                  }
+                );
+                const flag = await rsp.json();
+                flag
+                  ? message.success(
+                      `delete user ${record.name} (id=${record.id}) success !`
+                    )
+                  : message.error(
+                      `delete user ${record.name} (id=${record.id}) failed !`
+                    );
+                setReloadUserList({});
+              } catch (error) {
+                message.error(`delete user ${record.name} failed !`);
+              }
+              setDeleteOkLoading(false);
+            }}
+          >
+            <Button danger type="text" icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <>
       {/* 展示数据的表格 */}
       <Card
-        className="mt-3"
+        className="my-5 mx-7"
         type="inner"
         title={
           <span className="font-bold text-lg text-blue-600">Users Manage</span>
@@ -281,15 +345,38 @@ export default function Users() {
           loading={searchLoading}
         />
 
+        <Button
+          className="float-right"
+          icon={<ClearOutlined />}
+          loading={clearLoading}
+          onClick={() => {
+            setClearLoading(true);
+            setFilteredInfo({});
+            setSortedInfo({});
+            // 同时也要清空 tableParams 中的，重新调用后端接口
+            setTableParams({
+              ...tableParams,
+              filters: {},
+              sortField: undefined,
+              sortOrder: undefined,
+            });
+          }}
+        >
+          Clear Filt & Sort
+        </Button>
+
         {/* 表格 展示数据 */}
         <Table
           className="mt-2"
           rowKey={(record) => record.id.toString()}
           columns={columns}
-          dataSource={userList}
+          dataSource={userList.length !== 0 ? userList : mockUserList}
           loading={tableChangeLoading}
           // 分页
-          pagination={tableParams.pagination}
+          pagination={{
+            ...tableParams.pagination,
+            position: ['bottomCenter'],
+          }}
           onChange={handleTableChange}
         />
       </Card>
@@ -307,7 +394,7 @@ export default function Users() {
           <Button key="cancel" onClick={handleModalCancle}>
             Cancel
           </Button>,
-          <Button key="reset" onClick={handleModalReset}>
+          <Button key="reset" onClick={handleModalFormReset}>
             Reset
           </Button>,
           <Button
@@ -323,7 +410,7 @@ export default function Users() {
         <Form
           layout="horizontal"
           labelCol={{ span: 4 }}
-          form={formOfUserAdd} // formOfUserAdd 控制表单内容 Hook
+          form={formOfModal} // formOfModal 控制表单内容 Hook
           // preserve={false} // 配合 Modal 使用，关闭时销毁表单字段数据
           onFinish={(formData) => handleModalFormSubmit(formData)}
         >
@@ -370,11 +457,11 @@ export default function Users() {
 
           <Form.Item label="Team" name="team">
             <Select allowClear>
-              <Select.Option value="development">Development</Select.Option>
-              <Select.Option value="design">Design</Select.Option>
-              <Select.Option value="sell">Sell</Select.Option>
-              <Select.Option value="finance">Finance</Select.Option>
-              <Select.Option value="legal">Legal</Select.Option>
+              <Select.Option value="Development">Development</Select.Option>
+              <Select.Option value="Design">Design</Select.Option>
+              <Select.Option value="Sell">Sell</Select.Option>
+              <Select.Option value="Finance">Finance</Select.Option>
+              <Select.Option value="Legal">Legal</Select.Option>
             </Select>
           </Form.Item>
         </Form>
