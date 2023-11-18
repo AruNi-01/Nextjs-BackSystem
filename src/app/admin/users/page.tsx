@@ -203,12 +203,13 @@ export default function Users() {
       ],
       filteredValue: filteredInfo.gender || null, // 受控属性，用于控制页面的筛选
       render: (gender: string) => {
-        const isMan = gender === 'male';
+        const isMale = gender === 'male';
+        const isFemale = gender === 'female';
         return (
           <span>
-            <Tag color={isMan ? 'blue' : 'pink'}>
-              {isMan ? <ManOutlined /> : <WomanOutlined />}
-              {isMan ? ' Male' : ' Female'}
+            <Tag color={isMale ? 'blue' : isFemale ? 'pink' : 'orange'}>
+              {isMale ? <ManOutlined /> : isFemale ? <WomanOutlined /> : ''}
+              {isMale ? ' Male' : isFemale ? ' Female' : 'unkonwn'}
             </Tag>
           </span>
         );

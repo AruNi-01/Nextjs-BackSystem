@@ -6,7 +6,7 @@ import themeConfig from "@/theme/themeConfig";
 export default function HomePage() {
   return (
     <ConfigProvider theme={themeConfig}>
-      <div className="App">
+      <div className="App text-center">
         <h1>Home</h1>
         <Link href="/admin">
           <Button type="primary">Go Admin</Button>
