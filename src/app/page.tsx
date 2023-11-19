@@ -8,8 +8,10 @@ export default function HomePage() {
   return (
     <ConfigProvider theme={themeConfig}>
       <div className="App text-center mt-20">
-        <h1 className='mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white'>Welcome to Next.js BackSystem</h1>
-        <div className='mt-8'>
+        <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+          Welcome to Next.js BackSystem
+        </h1>
+        <div className="mt-8">
           <p className="text-lg font-bold max-w-3xl mx-auto">
             Hello, I'm AarynLu. This is a background management system based on
             React, Next.js, Ant-Design UI and Tailwind CSS. And it is a
