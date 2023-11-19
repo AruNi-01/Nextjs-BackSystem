@@ -1,11 +1,12 @@
 import React from 'react';
 import type { Metadata } from "next";
+import { Analytics } from '@vercel/analytics/react';
 import StyledComponentsRegistry from "@/lib/AntdRegistry";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Next App",
-  description: "next app",
+  title: "Next.js App",
+  description: "next.js & antd app",
 };
 
 export default function RootLayout({
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body className="m-0">
         <StyledComponentsRegistry>
           {children}
+          <Analytics />
         </StyledComponentsRegistry>
       </body>
     </html>
