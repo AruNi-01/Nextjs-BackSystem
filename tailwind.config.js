@@ -13,6 +13,9 @@ module.exports = {
       colors: {
         "antd-blue": "#1677ff",
       },
+      backgroundImage: {
+        'root-background': "url('/bg.jpg')",
+      },
     },
   },
   plugins: [],

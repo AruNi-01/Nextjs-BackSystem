@@ -332,9 +332,9 @@ export default function Users() {
       >
         {/* 搜索框 */}
         <Search
-          className="w-2/5"
+          className="w-1/5 rounded delay-300 duration-1000 transition-all hover:w-1/4"
           addonBefore="Name"
-          placeholder="Support fuzzy search"
+          placeholder="Search..."
           onSearch={(value, _e, _) => {
             setTableParams({
               ...tableParams,
@@ -348,6 +348,7 @@ export default function Users() {
 
         <Button
           className="float-right"
+          type="dashed"
           icon={<ClearOutlined />}
           loading={clearLoading}
           onClick={() => {
@@ -363,7 +364,9 @@ export default function Users() {
             });
           }}
         >
-          Clear Filt & Sort
+          <span className="">
+            Clear Filt & Sort
+          </span>
         </Button>
 
         {/* 表格 展示数据 */}
@@ -379,6 +382,9 @@ export default function Users() {
             position: ['bottomCenter'],
           }}
           onChange={handleTableChange}
+          rowClassName={() => {
+            return 'transition-all delay-100 duration-1000 hover: hover:shadow-md';
+          }}
         />
       </Card>
 

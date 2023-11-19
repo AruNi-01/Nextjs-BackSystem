@@ -34,7 +34,7 @@ export default function AdminLayout({
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical h-8 mb-3">
-          <Link href="/admin" className='text-black hover:text-purple-800'>
+          <Link href="/admin" className="text-black hover:text-purple-800">
             <div className="mx-auto my-auto rounded-b-xl text-center font-bold text-lg w-2/3 bg-gradient-to-r from-blue-500 to-violet-400">
               Menu
             </div>
@@ -60,11 +60,18 @@ export default function AdminLayout({
           </span>
           <Button
             href="/admin/login"
-            className="float-right mr-5 mt-4"
+            className="group float-right mr-5 mt-4 shadow-lg shadow-blue-500/50"
             type="primary"
             shape="round"
           >
-            <SmileTwoTone /> Login →
+            <SmileTwoTone />
+            Login&thinsp;
+            <span className="transition-transform delay-100 duration-1000 group-hover:translate-x-1">
+              {/* prettier-ignore */}
+              <svg className="w-3 h-3 ms-1 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+              </svg>
+            </span>
           </Button>
         </Header>
 
@@ -75,14 +82,13 @@ export default function AdminLayout({
 
         <Footer className="py-4 text-center">
           Next.js BackSystem© 2023 Made by{' '}
-          <a href="https://aruni.me" target="_blank">
-            AarynLu
-          </a>{' '}
-          <HeartTwoTone />
+          <Link className="group" href="https://aruni.me" target="_blank">
+            AarynLu <HeartTwoTone className="pl-1 group-hover:animate-ping" />
+          </Link>
         </Footer>
 
         <FloatButton.Group
-          className="right-7 mb-4"
+          className="right-7 mb-4 animate-pulse hover:animate-none"
           trigger="hover"
           type="primary"
           icon={<CommentOutlined />}
