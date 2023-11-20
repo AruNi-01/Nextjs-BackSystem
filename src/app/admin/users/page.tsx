@@ -364,9 +364,7 @@ export default function Users() {
             });
           }}
         >
-          <span className="">
-            Clear Filt & Sort
-          </span>
+          <span className="">Clear Filt & Sort</span>
         </Button>
 
         {/* 表格 展示数据 */}
