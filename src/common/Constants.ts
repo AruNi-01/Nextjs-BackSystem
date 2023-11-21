@@ -1,0 +1,7 @@
+enum PubSubTopics {
+  FORM_OF_MODAL = 'FORM_OF_MODAL',
+  SET_MODAL_VISIBLE = 'SET_MODAL_VISIBLE',
+  SET_RELOAD_USER_LIST = 'SET_RELOAD_USER_LIST',
+}
+
+export { PubSubTopics };
