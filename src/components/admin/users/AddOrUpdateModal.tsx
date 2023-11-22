@@ -1,37 +1,19 @@
 'use client';
 import { Button, Form, Input, Modal, Select, message } from 'antd';
-import { useForm } from 'antd/es/form/Form';
 import { useEffect, useState } from 'react';
-import PubSub from 'pubsub-js';
 import { ApiPathOfUser } from '@/config/apiConfig';
-import { useSubsByPubSubJS } from '@/utils/pubsub';
-import { PubSubTopics } from '@/common/Constants';
 
-export default function AddOrUpdateModal() {
-  useSubsByPubSubJS([
-    {
-      topic: PubSubTopics.FORM_OF_MODAL,
-      action: (_, formOfModalPubSubObj: { method: string; payload?: any }) => {
-        if (formOfModalPubSubObj.method === 'setFieldsValue') {
-          formOfModal.setFieldsValue(formOfModalPubSubObj.payload);
-        } else if (formOfModalPubSubObj.method === 'resetFields') {
-          formOfModal.resetFields();
-        } else {
-          console.error('Unknown method: ', formOfModalPubSubObj.method);
-        }
-      },
-    },
-    {
-      topic: PubSubTopics.SET_MODAL_VISIBLE,
-      action: (_, flag: boolean) => {
-        setModalVisible(flag);
-      },
-    },
-  ]);
-
-  const [formOfModal] = useForm();
-
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+export default function AddOrUpdateModal({
+  modalVisible,
+  setModalVisible,
+  formOfModal,
+  setReloadUserList,
+}: {
+  modalVisible: boolean;
+  setModalVisible: (flag: boolean) => void;
+  formOfModal: any;
+  setReloadUserList: (obj: {}) => void;
+}) {
   // 由于设置 Modal 关闭时自动清空（destroyOnClose={true}）会有 bug，故 Modal 关闭时手动清理
   useEffect(() => {
     !modalVisible && handleModalFormReset();
@@ -65,7 +47,7 @@ export default function AddOrUpdateModal() {
         !formData.id
           ? message.success(`Add user (Name: ${formData.name}) success!`)
           : message.success(`Update user (Name: ${formData.name}) success!`);
-        PubSub.publish(PubSubTopics.SET_RELOAD_USER_LIST, {});
+        setReloadUserList({});
       } else {
         handleFail();
       }
