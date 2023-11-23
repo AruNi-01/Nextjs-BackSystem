@@ -6,7 +6,7 @@ import {
   useFilteredInfoStore,
   useSortedInfoStore,
   useTableParamsStore,
-} from './UserTable';
+} from '@/state_stores/UserTableCompStore';
 
 interface IClearLoadingState {
   clearLoading: boolean;

@@ -1,7 +1,7 @@
 'use client';
+import { useTableParamsStore } from '@/state_stores/UserTableCompStore';
 import Search from 'antd/es/input/Search';
 import { create } from 'zustand';
-import { useTableParamsStore } from './UserTable';
 
 interface ISearchLoadingState {
   isSearchLoading: boolean;
@@ -16,7 +16,7 @@ export default function SearchInput() {
   const { isSearchLoading } = useSearchLoadingStore((state) => ({
     isSearchLoading: state.isSearchLoading,
   }));
-  const {tableParams, setTableParams} = useTableParamsStore((state) => ({
+  const { tableParams, setTableParams } = useTableParamsStore((state) => ({
     tableParams: state.tableParams,
     setTableParams: state.setTableParams,
   }));

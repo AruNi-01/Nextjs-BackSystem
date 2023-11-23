@@ -3,7 +3,6 @@ import { Button, Card, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/es/form/Form';
 import { UserAddOutlined } from '@ant-design/icons';
-
 import AddOrUpdateModal from '@/components/admin/users/AddOrUpdateModal';
 import ClearButton, {
   useClearLoadingStore,
@@ -11,11 +10,12 @@ import ClearButton, {
 import SearchInput, {
   useSearchLoadingStore,
 } from '@/components/admin/users/SearchInput';
-import UserTable, {
+import UserTable from '@/components/admin/users/UserTable';
+import { ApiPathOfUser } from '@/config/apiConfig';
+import {
   useTableChangeLoadingStore,
   useTableParamsStore,
-} from '@/components/admin/users/UserTable';
-import { ApiPathOfUser } from '@/config/apiConfig';
+} from '@/state_stores/UserTableCompStore';
 
 export interface UserDataType {
   id: number;
@@ -42,7 +42,7 @@ export default function Users() {
   }));
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [formOfModal] = useForm(); // 控制表单内容 Hook
+  const [formOfModal] = useForm(); // 控制表单内容 Hook，zustand 无法管理（hook 只能在组件函数内使用），所以将其放在父组件中共享
 
   const [reloadUserList, setReloadUserList] = useState({});
 
